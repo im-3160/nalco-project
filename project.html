@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Progress Charts</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/1.0.2/chartjs-plugin-annotation.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f2f2f2;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px auto;
+        }
+
+        .chart {
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            margin: 10px;
+            width: 100vw;
+        }
+
+        @media (min-width: 768px) {
+            .chart {
+                width: 42vw; 
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .chart {
+                width: 40vw; 
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Project Progress Charts</h1>
+    <p>For the Month of December</p>
+</header>
+
+<div class="container">
+    <div class="chart">
+        <canvas id="barChart" height="200"></canvas>
+    </div>
+    <div class="chart">
+        <canvas id="lineChart" height="200"></canvas>
+    </div>
+    <div class="chart" id="overlappingColumnChart">
+        
+        <canvas id="actualChart" height="200"></canvas>
+    </div>
+</div>
+
+<script>
+    // Bar chart data
+    const barChartData = {
+        labels: ['BHEL/BTG', 'Bridge & Roof / RCC Chimney Works', 'Bridge & Roof / Alumina Storage Silos', 'Bridge & Roof / Civil and Strl.Works', 'Bridge & Roof / Mechanical Piping Works','Bridge & Roof / Tankage Works', 'FFIL / Bauxite Grinding', 'Lime Storage (AIFL)', 'NGSL / Civil and Strctural Works'],
+        datasets: [
+            {
+                label: 'Actual',
+                backgroundColor: '#3498db',
+                data: [55, 65, 25, 65, 40, 60, 55, 55, 50]
+            },
+            {
+                label: 'Plan',
+                backgroundColor: '#e74c3c',
+                data: [50, 62, 24, 60, 35, 56, 50, 50, 52]
+            }
+        ]
+    };
+
+    // Line chart data
+    const lineChartData = {
+        labels: ['BHEL/BTG', 'Bridge & Roof / RCC Chimney Works', 'Bridge & Roof / Alumina Storage Silos', 'Bridge & Roof / Civil and Strl.Works', 'Bridge & Roof / Mechanical Piping Works','Bridge & Roof / Tankage Works', 'FFIL / Bauxite Grinding', 'Lime Storage (AIFL)', 'NGSL / Civil and Strctural Works'],
+        datasets: [
+            {
+                label: 'Actual',
+                borderColor: '#3498db',
+                backgroundColor: 'rgba(52, 152, 219, 0.2)',
+                data: [55, 65, 25, 65, 40, 60, 55, 55, 50],
+                fill: false,
+            },
+            {
+                label: 'Plan',
+                borderColor: '#e74c3c',
+                backgroundColor: 'rgba(231, 76, 60, 0.2)',
+                data: [50, 62, 24, 60, 35, 56, 50, 50, 52],
+                fill: false,
+            }
+        ]
+    };
+
+    // Bar chart
+    const barCtx = document.getElementById('barChart').getContext('2d');
+    const barChart = new Chart(barCtx, {
+        type: 'bar',
+        data: barChartData,
+        options: {
+            indexAxis: 'x',
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+            },
+        }
+    });
+
+    // Line chart
+    const lineCtx = document.getElementById('lineChart').getContext('2d');
+    const lineChart = new Chart(lineCtx, {
+        type: 'line',
+        data: lineChartData,
+        options: {
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+            },
+        }
+    });
+
+    // Stacked data
+    var data = {
+            labels: ['BHEL/BTG', 'Bridge & Roof / RCC Chimney Works', 'Bridge & Roof / Alumina Storage Silos', 'Bridge & Roof / Civil & Strl. Works', 'Bridge & Roof / Mechanical & Piping ', 'Bridge & Roof / Tankage Roofs','FFIL / Bauxite Grinding', 'Lime Storage(AIFL)', 'NGSL / Civil & Structural Works'],
+            datasets: [
+                {
+                    label: 'Plan',
+                    backgroundColor: '#e74c3c',
+                    data: [55, 65, 25, 65, 40, 60, 55, 55, 50],
+                },
+                {
+                    label: 'Actual',
+                    backgroundColor: '#3498db',
+                    data: [50, 62, 24, 60, 35, 56, 50, 50, 52],
+                }
+            ]
+        };
+
+        const commonData = {
+        labels: ['BHEL/BTG', 'Bridge & Roof / RCC Chimney Works', 'Bridge & Roof / Alumina Storage Silos', 'Bridge & Roof / Civil and Strl.Works', 'Bridge & Roof / Mechanical Piping Works','Bridge & Roof / Tankage Works', 'FFIL / Bauxite Grinding', 'Lime Storage (AIFL)', 'NGSL / Civil and Strctural Works'],
+        actualData: [55, 65, 25, 65, 40, 60, 55, 55, 50],
+        planData: [50, 62, 24, 60, 35, 56, 50, 50, 52],
+    };
+    const actualChartCtx = document.getElementById('actualChart').getContext('2d');
+    const actualChart = new Chart(actualChartCtx, {
+        type: 'bar',
+        data: {
+            labels: commonData.labels,
+            datasets: [
+                {
+
+                    label: 'Actual',
+                backgroundColor: '#3498db',
+                    data: [55, 65, 25, 65, 40, 60, 55, 55, 50],
+                    categoryPercentage:0.5,
+                    order:0,
+                },
+                {
+                    label: 'Plan',
+                    backgroundColor: '#e74c3c',
+                    data: [50, 62, 24, 60, 35, 56, 50, 50, 52],
+
+                    order:1,
+                }
+            ]
+        },
+        options: {
+            scales: {
+                x: { stacked: true },
+                y: { beginAtZero: true }
+            },
+            plugins: {},
+        },
+            plugins: [{
+            afterDraw: function(chart) {
+                const ctx = chart.ctx;
+                const meta = chart.getDatasetMeta(0);
+
+                meta.data.forEach(function (bar, index) {
+                    const x = bar.x;
+                    const y = bar.y;
+
+                    ctx.save();
+                    ctx.font = 'bold 12px Arial';
+                    ctx.fillStyle = '#000';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'bottom';
+                    const difference = commonData.actualData[index] - commonData.planData[index];
+                    ctx.fillText(difference, x, y - 8);
+                    ctx.restore();
+                });
+            }
+        }]
+    });
+
+
+        // Options for the chart
+        var options = {
+            scales: {
+                x: { stacked: true },
+                y: { stacked: true }
+            },
+            plugins: {
+                annotation: {
+                    drawTime: 'beforeDatasetsDraw',
+                    annotations: data.labels.map(function(label, index) {
+                        return {
+                            type: 'line',
+                            mode: 'vertical',
+                            scaleID: 'x',
+                            value: label,
+                            borderColor: 'transparent',
+                            borderWidth: 0,
+                            label: {
+                                content:  (data.datasets[1].data[index] - data.datasets[0].data[index]),
+                                enabled: true,
+                                position: 'start', 
+                                yAdjust: -10 
+                            }
+                        };
+                    })
+                }
+            }
+        };
+
+
+           // Stacked chart
+           var ctx = document.getElementById('stackedColumnChart').getContext('2d');
+        var stackedColumnChart = new Chart(ctx, {
+            type: 'bar',
+            data: data,
+            options: options
+        });
+</script>
+
+</body>
+</html>
